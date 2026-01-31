@@ -39,16 +39,31 @@ def get_alignment_score(restaurant_data, foodbank_data):
         model = genai.GenerativeModel('gemini-2.0-flash')
         
         prompt = f"""
-        You are an AI matcher for a food rescue program. 
-        Compare the following restaurant food offer with the food bank's needs.
-        
+        You are an AI matcher for 'Cup of Sugar', a food rescue program. 
+        Compare the following restaurant food offer with the food bank's specific profile.
+
         Restaurant Offer: "{restaurant_data}"
-        Food Bank Needs: "{foodbank_data}"
+        Food Bank Profile (Needs & Inventory): "{foodbank_data}"
         
-        Determine how well the offer matches the needs.
+        MATCHING CRITERIA (in order of priority):
+
+        1. DIRECT NEEDS (Highest Priority - Score 80%-100%):
+           - If the food bank explicitly lists an item as "needed" or "requesting", and the offer includes it.
+           - Give these matches the highest scores.
+
+        2. AVOID OVERSUPPLY (Score 10%-30%):
+           - If the food bank already has "plenty of" or is "well-stocked" with an item.
+           - Give these matches low scores to encourage better allocation.
+
+        3. RECIPE COMPLEMENTARITY (Score 50%-80%):
+           - If not explicitly needed but not overstocked, evaluate how well the offer complements existing inventory.
+           - Consider potential complete meals (e.g., offer has cheese, food bank has pasta + sauce).
+           - Score based on nutritional value and meal completeness.
+
+        Determine how well the offer matches based on these criteria.
         Return ONLY valid JSON with no markdown formatting. The JSON must contain exactly two fields:
         1. "score": A percentage string (e.g., "85%") representing the match quality.
-        2. "reasoning": A short sentence explaining why.
+        2. "reasoning": A concise rationale explaining which criteria applied (Direct Need, Oversupply, or Recipe/Complement) and why.
         """
         
         response = model.generate_content(prompt)

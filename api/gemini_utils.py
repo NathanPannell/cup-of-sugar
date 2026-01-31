@@ -51,22 +51,45 @@ def get_alignment_scores(donor_prompt: str, foodbanks: List[dict]) -> MatchRespo
     DONOR PROMPT: "{donor_prompt}"
     
     Below is a list of food banks and their specific profiles. 
-    Assume that values listed are inventory/capabilities rather than needs unless otherwise specified:
+    Food bank data may include both current inventory/capabilities AND explicit needs/requests:
     
     {context_str}
 
-    Try to compliment what food banks have with what the donor's offer.
+    MATCHING CRITERIA (in order of priority):
     
-    Examples:
-    - Food bank inventory has veggies, but no salad dressing. Donor has salad dressing. Give it a high score.
-    - Food bank inventory has lots of meat and tomatoes, but no pasta. Donor has pasta. Give it a high score.
-    - Food bank has plenty of bread. Donor has bread. Give it a low score, since the food bank already has it so it would be better allocated to another ..
+    1. DIRECT NEEDS (Highest Priority - Score 8-10):
+       - If a food bank explicitly lists an item as "needed", "requesting", or "looking for", 
+         and the donor has that item, this is a PERFECT match.
+       - Give these matches the highest scores (8-10).
+    
+    2. AVOID OVERSUPPLY (Score 1-3):
+       - If a food bank already has "plenty of", "lots of", "abundant", or "well-stocked" with an item,
+         and the donor is offering that same item, this is a POOR match.
+       - Give these matches low scores (1-3) since the donation would be better allocated elsewhere.
+    
+    3. RECIPE COMPLEMENTARITY (Score 5-8):
+       - If an item is NOT explicitly listed as needed, AND the food bank doesn't already have plenty of it,
+         evaluate how well the donor's items complement the food bank's existing inventory.
+       - Consider potential recipes that would bring items together:
+         * Proteins + grains + vegetables = complete meals
+         * Pasta + sauce + cheese = pasta dishes
+         * Bread + spreads/proteins = sandwiches
+         * Vegetables + dressing/oils = salads
+         * Baking ingredients that complete a recipe set
+       - Score based on how many complete, nutritious meals could be created (5-8).
+    
+    EXAMPLES:
+    - Food bank explicitly needs "canned vegetables". Donor has canned vegetables. → Score: 10 (Direct need)
+    - Food bank has "plenty of bread, well-stocked". Donor has bread. → Score: 2 (Oversupply)
+    - Food bank has pasta, tomato sauce, but no cheese. Donor has cheese. → Score: 8 (Recipe complement)
+    - Food bank has chicken, rice, but no vegetables. Donor has mixed vegetables. → Score: 7 (Recipe complement)
+    - Food bank has flour, sugar, but no eggs or oil. Donor has eggs and oil. → Score: 8 (Recipe complement)
     
     For EACH food bank, provide:
     1. A match score from 1 to 10 (1 = poor match, 10 = perfect match).
-    2. A concise rationale for the score.
+    2. A concise rationale explaining which criteria applied and why.
     
-    Also provide an overall summary of the recommendations.
+    Also provide an overall summary recommending the best allocation of the donated items.
     """
     
     try:
