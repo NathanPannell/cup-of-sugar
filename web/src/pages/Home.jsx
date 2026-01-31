@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { FileSpreadsheet, Terminal, Store } from 'lucide-react';
+import { Heart, Building2 } from 'lucide-react';
 
 const Home = () => {
     return (
@@ -15,10 +15,10 @@ const Home = () => {
         }}>
             <div style={{ textAlign: 'center', marginBottom: 'var(--spacing-md)' }}>
                 <h1 className="text-gradient" style={{ fontSize: '4rem', marginBottom: 'var(--spacing-xs)', lineHeight: 1.1 }}>
-                    Cuppa Sugar
+                    Cup of Sugar
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.25rem' }}>
-                    Choose your ingredient to get started
+                    Connecting food donors with those in need
                 </p>
             </div>
 
@@ -29,7 +29,7 @@ const Home = () => {
                 width: '100%',
                 maxWidth: '900px'
             }}>
-                <Link to="/prompt-upload" style={{ textDecoration: 'none' }}>
+                <Link to="/donate" style={{ textDecoration: 'none' }}>
                     <div className="glass-panel" style={{
                         padding: 'var(--spacing-lg)',
                         display: 'flex',
@@ -59,16 +59,16 @@ const Home = () => {
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
-                            <Terminal size={48} color="#ef4444" />
+                            <Heart size={48} color="#ef4444" />
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <h2 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-xs)' }}>Food Donate Prompt</h2>
-                            <p style={{ color: 'var(--text-secondary)' }}>Enter a text prompt to donate food.</p>
+                            <h2 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-xs)' }}>I am a food donor</h2>
+                            <p style={{ color: 'var(--text-secondary)' }}>Donate surplus food to local organizations.</p>
                         </div>
                     </div>
                 </Link>
 
-                <Link to="/food-bank/setup" style={{ textDecoration: 'none' }}>
+                <Link to="/foodbanks" style={{ textDecoration: 'none' }}>
                     <div className="glass-panel" style={{
                         padding: 'var(--spacing-lg)',
                         display: 'flex',
@@ -98,11 +98,11 @@ const Home = () => {
                             alignItems: 'center',
                             justifyContent: 'center'
                         }}>
-                            <Store size={48} color="#4ade80" />
+                            <Building2 size={48} color="#4ade80" />
                         </div>
                         <div style={{ textAlign: 'center' }}>
-                            <h2 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-xs)' }}>Food Bank</h2>
-                            <p style={{ color: 'var(--text-secondary)' }}>Register or update inventory for food banks.</p>
+                            <h2 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-xs)' }}>I am a food bank</h2>
+                            <p style={{ color: 'var(--text-secondary)' }}>Manage your profile and update your needs.</p>
                         </div>
                     </div>
                 </Link>
