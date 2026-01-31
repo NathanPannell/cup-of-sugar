@@ -22,3 +22,7 @@ The system uses a modern stack to connect donors with food banks.
 - **Backend**: Python / Flask
 - **Database**: Supabase
 - **AI**: Gemini API
+- **Deployment**: Run full-stack application with `docker compose up -d --build`
+#### Submission
+- **Canva Link**: [https://www.canva.com/design/DAHAAuHZorM/54fyvb--lgg6hBasUxpgig/edit](https://www.canva.com/design/DAHAAuHZorM/54fyvb--lgg6hBasUxpgig/edit)
+- **Submission Snapshot**: Attached as PDF for verification
