@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Send, CheckCircle, AlertCircle, ArrowLeft, Loader2, MapPin, Phone, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Send, Loader2, Star, ArrowRight } from 'lucide-react';
 import { findRecommendations } from '../utils/api';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const Donate = () => {
-    const navigate = useNavigate();
     const [prompt, setPrompt] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [recommendations, setRecommendations] = useState(null);
@@ -26,135 +28,70 @@ const Donate = () => {
     };
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-dark)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            {/* Header (30% Accent - Consistent with Home) */}
-            <header style={{
-                backgroundColor: 'var(--brand-primary)',
-                padding: '1rem var(--spacing-md)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button
-                        onClick={() => navigate('/')}
-                        style={{
-                            background: 'white',
-                            border: 'none',
-                            color: 'black',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            cursor: 'pointer',
-                            fontWeight: 600,
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                        className="hover-bright"
-                    >
-                        <ArrowLeft size={18} /> Back
-                    </button>
-                    <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem', fontFamily: 'var(--font-sans)' }}>Cup of Sugar</span>
-                </div>
-            </header>
-
-            <main style={{ padding: 'var(--spacing-md)', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{
-                    backgroundColor: 'white',
-                    borderRadius: 'var(--radius-lg)',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    padding: 'var(--spacing-lg)',
-                    maxWidth: '800px',
-                    width: '100%',
-                    marginTop: '1rem'
-                }}>
-                    <h1 style={{ textAlign: 'center', marginBottom: 'var(--spacing-lg)', color: 'black' }}>What would you like to donate?</h1>
-
-                    <div className="glass-panel" style={{ padding: 'var(--spacing-lg)', backgroundColor: 'white', border: '1px solid #e5e7eb' }}>
-                        {!recommendations ? (
-                            <>
-                                <textarea
+        <div className="flex flex-col items-center gap-8 py-8 animate-in fade-in zoom-in duration-500">
+             <Card className="w-full max-w-2xl shadow-lg border-muted/40">
+                <CardHeader className="text-center pb-2">
+                    <CardTitle className="text-2xl md:text-3xl text-primary font-bold">What would you like to donate?</CardTitle>
+                    <CardDescription>
+                         Describe your donation and we'll match you with the best food banks.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 p-6 md:p-8">
+                    {!recommendations ? (
+                        <>
+                            <div className="space-y-4">
+                                <Textarea
                                     value={prompt}
                                     onChange={(e) => setPrompt(e.target.value)}
                                     placeholder="Example: I have 20 loaves of bread and 10 gallons of milk that expire in 3 days."
                                     disabled={submitting}
-                                    style={{
-                                        width: '100%',
-                                        minHeight: '150px',
-                                        background: '#f9fafb',
-                                        border: '1px solid #d1d5db',
-                                        borderRadius: 'var(--radius-sm)',
-                                        padding: 'var(--spacing-sm)',
-                                        color: 'black',
-                                        fontSize: '1rem',
-                                        resize: 'vertical',
-                                        outline: 'none',
-                                        marginBottom: 'var(--spacing-md)'
-                                    }}
+                                    className="min-h-[150px] text-base resize-none bg-muted/20"
                                 />
-                                <button
-                                    className="btn-primary"
-                                    onClick={handleSubmit}
+                                <Button 
+                                    onClick={handleSubmit} 
                                     disabled={submitting || !prompt.trim()}
-                                    style={{
-                                        width: '100%',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        gap: 'var(--spacing-xs)',
-                                        background: 'var(--brand-primary)',
-                                        color: 'black',
-                                        fontWeight: 'bold',
-                                        border: 'none',
-                                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                                    }}
+                                    className="w-full text-base py-6 font-semibold shadow-md"
                                 >
-                                    {submitting ? <Loader2 className="animate-spin" size={20} /> : <><Send size={20} /> Find Recommendations</>}
-                                </button>
-                                {error && <p style={{ color: 'var(--error)', marginTop: 'var(--spacing-sm)', textAlign: 'center' }}>{error}</p>}
-                            </>
-                        ) : (
-                            <div>
-                                <h3 style={{ marginBottom: 'var(--spacing-md)', textAlign: 'center', color: 'black' }}>Top Recommended Food Banks</h3>
-                                <div style={{ display: 'grid', gap: 'var(--spacing-md)' }}>
-                                    {recommendations.sort((a, b) => b.match_score - a.match_score).map((bank) => (
-                                        <Link to={`/foodbanks/${bank.id}`} key={bank.id} style={{ textDecoration: 'none' }}>
-                                            <div className="glass-panel hover-bright" style={{
-                                                padding: 'var(--spacing-md)',
-                                                background: 'white',
-                                                cursor: 'pointer',
-                                                border: '1px solid #e5e7eb',
-                                                boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                                            }}>
-                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                    <h4 style={{ color: 'black', margin: 0, fontSize: '1.1rem' }}>{bank.name}</h4>
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#d97706' }}>
-                                                        <Star size={16} fill="#d97706" />
-                                                        <span>{bank.match_score}% Match</span>
-                                                    </div>
-                                                </div>
-                                                <p style={{ color: '#4b5563', fontSize: '0.9rem', marginTop: 'var(--spacing-xs)' }}>
-                                                    {bank.match_reason}
-                                                </p>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                                <button
-                                    className="btn-secondary"
-                                    onClick={() => setRecommendations(null)}
-                                    style={{ width: '100%', marginTop: 'var(--spacing-md)', borderColor: 'black', color: 'black' }}
-                                >
-                                    Start Over
-                                </button>
+                                    {submitting ? (
+                                        <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Matching...</>
+                                    ) : (
+                                        <><Send className="mr-2 h-5 w-5" /> Find Recommendations</>
+                                    )}
+                                </Button>
                             </div>
-                        )}
-                    </div>
-                </div>
-            </main>
+                            {error && <p className="text-destructive text-sm text-center font-medium bg-destructive/10 p-3 rounded-md">{error}</p>}
+                        </>
+                    ) : (
+                        <div className="space-y-6">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-xl font-semibold">Top Recommendations</h3>
+                                <Button variant="outline" size="sm" onClick={() => setRecommendations(null)}>
+                                    Start Over
+                                </Button>
+                            </div>
+                            
+                            <div className="grid gap-4">
+                                {recommendations.sort((a, b) => b.match_score - a.match_score).map((bank) => (
+                                    <Link to={`/foodbanks/${bank.id}`} key={bank.id} className="block no-underline group">
+                                        <div className="rounded-lg border bg-card p-4 transition-all hover:bg-accent/50 hover:shadow-md hover:border-primary/50 group-hover:scale-[1.01]">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <h4 className="font-semibold text-lg group-hover:text-primary transition-colors">{bank.name}</h4>
+                                                <div className="flex items-center gap-1 text-amber-500 bg-amber-50 px-2 py-1 rounded-full text-xs font-medium">
+                                                    <Star size={14} fill="currentColor" />
+                                                    <span>{bank.match_score}% Match</span>
+                                                </div>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                                {bank.match_reason}
+                                            </p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 };

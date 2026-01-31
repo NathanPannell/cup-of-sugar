@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Plus, ArrowLeft, Loader2, Search } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Plus, Loader2, MapPin } from 'lucide-react';
 import { getFoodBanks } from '../utils/api';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 
 const FoodBanksList = () => {
-    const navigate = useNavigate();
     const [foodbanks, setFoodbanks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -24,82 +25,60 @@ const FoodBanksList = () => {
     }, []);
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-dark)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            {/* Header (30% Accent) */}
-            <header style={{
-                backgroundColor: 'var(--brand-primary)',
-                padding: '1rem var(--spacing-md)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button
-                        onClick={() => navigate('/')}
-                        style={{
-                            background: 'white',
-                            border: 'none',
-                            color: 'black',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            cursor: 'pointer',
-                            fontWeight: 600,
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                        className="hover-bright"
-                    >
-                        <ArrowLeft size={18} /> Back
-                    </button>
-                    <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem', fontFamily: 'var(--font-sans)' }}>Food Banks</span>
+        <div className="space-y-6 animate-in fade-in duration-500">
+            {/* Page Header */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Food Banks</h2>
+                    <p className="text-muted-foreground">Manage and view registered food banks.</p>
                 </div>
-                <Link to="/foodbanks/new" className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', textDecoration: 'none', background: 'black', color: 'white', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px' }}>
-                    <Plus size={18} /> New
+                <Link to="/foodbanks/new">
+                     <Button className="shadow-sm">
+                        <Plus className="mr-2 h-4 w-4" /> Add New
+                    </Button>
                 </Link>
-            </header>
+            </div>
 
-            <main style={{ padding: 'var(--spacing-md)', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div style={{
-                    backgroundColor: 'white',
-                    borderRadius: 'var(--radius-lg)',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    padding: 'var(--spacing-lg)',
-                    maxWidth: '1200px',
-                    width: '100%',
-                    marginTop: '1rem'
-                }}>
-                    {loading ? (
-                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: 'var(--spacing-xl)' }}>
-                            <Loader2 className="animate-spin" size={48} color="black" />
-                        </div>
-                    ) : error ? (
-                        <p style={{ color: 'var(--error)', textAlign: 'center' }}>{error}</p>
-                    ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 'var(--spacing-md)' }}>
-                            {foodbanks.map((bank) => (
-                                <Link to={`/foodbanks/${bank.id}`} key={bank.id} style={{ textDecoration: 'none' }}>
-                                    <div className="glass-panel hover-bright" style={{
-                                        padding: 'var(--spacing-md)',
-                                        height: '100%',
-                                        background: 'white',
-                                        border: '1px solid #e5e7eb',
-                                        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                                    }}>
-                                        <h3 style={{ color: '#d97706', marginBottom: 'var(--spacing-xs)' }}>{bank.name}</h3>
-                                        <p style={{ color: '#4b5563', fontSize: '0.9rem', overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
-                                            {bank.description || 'No description provided.'}
-                                        </p>
-                                    </div>
-                                </Link>
-                            ))}
+            {/* List */}
+             {loading ? (
+                <div className="flex justify-center items-center py-20">
+                    <Loader2 className="animate-spin text-primary" size={48} />
+                </div>
+            ) : error ? (
+                <div className="p-8 text-center bg-destructive/10 rounded-lg border border-destructive/20">
+                     <p className="text-destructive font-medium">{error}</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {foodbanks.map((bank) => (
+                        <Link to={`/foodbanks/${bank.id}`} key={bank.id} className="block no-underline group h-full">
+                            <Card className="h-full transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary/50 group-hover:bg-accent/5">
+                                <CardHeader>
+                                    <CardTitle className="text-xl text-primary group-hover:text-primary/80 transition-colors">
+                                        {bank.name}
+                                    </CardTitle>
+                                    {bank.address && (
+                                         <CardDescription className="flex items-start gap-1 mt-1">
+                                            <MapPin className="w-3 h-3 mt-1 shrink-0" /> 
+                                            <span className="line-clamp-1">{bank.address}</span>
+                                        </CardDescription>
+                                    )}
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed">
+                                        {bank.description || 'No description provided.'}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        </Link>
+                    ))}
+                    {foodbanks.length === 0 && (
+                        <div className="col-span-full text-center py-12 text-muted-foreground bg-muted/10 rounded-lg border border-dashed">
+                            No food banks found. Create one to get started.
                         </div>
                     )}
                 </div>
-            </main>
+            )}
         </div>
     );
 };

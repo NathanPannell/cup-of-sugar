@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, Edit, Phone, Mail, MapPin, Sparkles, Building2, Heart, Loader2 } from 'lucide-react';
+import { useParams, Link } from 'react-router-dom';
+import { Edit, Phone, Mail, MapPin, Sparkles, Building2, Heart, Loader2 } from 'lucide-react';
 import { getFoodBank, getFoodBankSummary } from '../utils/api';
-import '../App.css';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const FoodBankDetail = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
 
     const [bank, setBank] = useState(null);
     const [summary, setSummary] = useState(null);
@@ -44,167 +44,140 @@ const FoodBankDetail = () => {
 
     if (loading) {
         return (
-            <div className="container" style={{ minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Loader2 className="spin" size={48} color="var(--primary-color)" />
+            <div className="flex justify-center items-center min-h-[50vh]">
+                <Loader2 className="animate-spin text-primary" size={48} />
             </div>
         );
     }
 
     if (error || !bank) {
         return (
-            <div className="container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', padding: 'var(--spacing-md)' }}>
-                <h2 style={{ color: 'var(--text-primary)' }}>{error || "Food Bank not found"}</h2>
-                <button onClick={() => navigate('/')} className="button primary-button" style={{ marginTop: '1rem' }}>Return Home</button>
+            <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
+                <h2 className="text-2xl font-bold text-destructive">{error || "Food Bank not found"}</h2>
+                <Link to="/">
+                    <Button>Return Home</Button>
+                </Link>
             </div>
         );
     }
 
     return (
-        <div style={{ backgroundColor: 'var(--bg-dark)', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-            {/* Header (30% Accent) */}
-            <header style={{
-                backgroundColor: 'var(--brand-primary)',
-                padding: '1rem var(--spacing-md)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <button
-                        onClick={() => navigate(-1)}
-                        style={{
-                            background: 'white',
-                            border: 'none',
-                            color: 'black',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '0.5rem',
-                            cursor: 'pointer',
-                            fontWeight: 600,
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }}
-                        className="hover-bright"
-                    >
-                        <ArrowLeft size={18} /> Back
-                    </button>
-                    <span style={{ color: 'white', fontWeight: 900, fontSize: '1.2rem', fontFamily: 'var(--font-sans)' }}>Food Bank Details</span>
+        <div className="space-y-8 animate-in fade-in zoom-in duration-500 max-w-5xl mx-auto">
+            
+            {/* Header Section with Actions */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-6">
+                <div>
+                     <h1 className="text-4xl font-extrabold tracking-tight lg:text-5xl text-primary drop-shadow-sm mb-2">
+                        {bank.name}
+                    </h1>
+                     <div className="flex items-center text-muted-foreground">
+                        <MapPin className="mr-1 h-4 w-4" />
+                        {bank.address || "No address provided"}
+                     </div>
                 </div>
-                <Link to={`/foodbanks/${id}/update`} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-xs)', textDecoration: 'none', background: 'white', color: 'black', border: 'none', padding: '0.5rem 1rem', borderRadius: '4px', fontSize: '0.9rem', fontWeight: 600 }}>
-                    <Edit size={18} /> Update Needs
+                <Link to={`/foodbanks/${id}/update`}>
+                    <Button variant="outline" className="gap-2">
+                        <Edit size={16} /> Update Needs
+                    </Button>
                 </Link>
-            </header>
+            </div>
 
-            <main style={{ padding: 'var(--spacing-md)', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <div className="card" style={{
-                    backgroundColor: 'white',
-                    borderRadius: 'var(--radius-lg)',
-                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                    padding: 'var(--spacing-lg)',
-                    maxWidth: '800px',
-                    width: '100%',
-                    margin: '0 auto',
-                    textAlign: 'left',
-                    marginTop: '1rem'
-                }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--spacing-md)' }}>
-                        <div>
-                            <h1 style={{
-                                fontSize: '2.5rem',
-                                marginBottom: '0.5rem',
-                                background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)', /* Darker Gold for visibility on white */
-                                WebkitBackgroundClip: 'text',
-                                WebkitTextFillColor: 'transparent',
-                                display: 'inline-block'
-                            }}>
-                                {bank.name}
-                            </h1>
-                        </div>
-                    </div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                {/* Main Content - Left Column */}
+                <div className="lg:col-span-2 space-y-8">
+                     
+                     <section>
+                        <h3 className="text-2xl font-semibold mb-4 text-foreground">About Us</h3>
+                        <p className="text-lg text-muted-foreground leading-relaxed">
+                            {bank.description || "No description provided."}
+                        </p>
+                     </section>
 
-                    <div style={{ display: 'grid', gap: 'var(--spacing-lg)', marginBottom: 'var(--spacing-lg)' }}>
-                        <div>
-                            <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-sm)' }}>About Us</h3>
-                            <p style={{ color: 'var(--text-secondary)', lineHeight: '1.6' }}>{bank.description || "No description provided."}</p>
-                        </div>
-
-                        {/* AI Smart Summary Section */}
-                        <div className="glass-panel" style={{ padding: 'var(--spacing-md)', background: '#fffbeb', border: '1px solid #fcd34d' }}>
-                            <h3 style={{ color: '#b45309', marginBottom: 'var(--spacing-md)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <Sparkles size={20} color="#f59e0b" /> AI Insight
-                            </h3>
-                            {loadingSummary ? (
-                                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', color: 'var(--text-secondary)' }}>
-                                    <Loader2 className="spin" size={16} /> Analyzing latest updates...
+                    {/* AI Smart Summary Section */}
+                    <Card className="border-amber-200 bg-amber-50/50 dark:bg-amber-950/10">
+                        <CardHeader className="pb-2">
+                             <CardTitle className="text-amber-600 flex items-center gap-2 text-xl">
+                                <Sparkles size={20} className="text-amber-500 fill-amber-500" /> AI Insight
+                             </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                             {loadingSummary ? (
+                                <div className="flex gap-2 items-center text-muted-foreground py-4">
+                                    <Loader2 className="animate-spin" size={16} /> Analyzing latest updates...
                                 </div>
                             ) : summary ? (
-                                <div style={{ display: 'grid', gap: '1rem' }}>
+                                <div className="space-y-4">
                                     <div>
-                                        <strong style={{ color: '#d97706', display: 'block', marginBottom: '0.25rem' }}>What We Have:</strong>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>{summary.inventory_summary}</p>
+                                        <h4 className="font-semibold text-amber-700 mb-1">What We Have:</h4>
+                                        <p className="text-foreground/80">{summary.inventory_summary}</p>
                                     </div>
                                     <div>
-                                        <strong style={{ color: '#d97706', display: 'block', marginBottom: '0.25rem' }}>What We Need:</strong>
-                                        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>{summary.needs_summary}</p>
+                                        <h4 className="font-semibold text-amber-700 mb-1">What We Need:</h4>
+                                        <p className="text-foreground/80">{summary.needs_summary}</p>
                                     </div>
                                 </div>
                             ) : (
-                                <p style={{ color: 'var(--text-secondary)' }}>Unable to load AI application insights.</p>
+                                <p className="text-muted-foreground">Unable to load AI application insights.</p>
                             )}
-                            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '1rem', fontStyle: 'italic', opacity: 0.7 }}>
+                            <p className="text-xs text-muted-foreground mt-4 italic">
                                 * Generated by AI based on recent updates from the food bank.
                             </p>
-                        </div>
-
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 'var(--spacing-md)' }}>
-                            <div className="glass-panel" style={{ padding: 'var(--spacing-md)', background: '#f9fafb', border: '1px solid #e5e7eb' }}>
-                                <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-md)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <Building2 size={20} color="var(--brand-primary)" /> Contact Info
-                                </h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                                    {bank.address && (
-                                        <div style={{ display: 'flex', gap: '0.75rem', color: 'var(--text-secondary)' }}>
-                                            <MapPin size={18} style={{ flexShrink: 0 }} />
-                                            <span>{bank.address}</span>
-                                        </div>
-                                    )}
-                                    {bank.phone_number && (
-                                        <a href={`tel:${bank.phone_number}`} className="hover-bright" style={{ display: 'flex', gap: '0.75rem', color: 'var(--text-primary)', textDecoration: 'none' }}>
-                                            <Phone size={18} color="var(--brand-primary)" />
-                                            {bank.phone_number}
-                                        </a>
-                                    )}
-                                    {bank.email && (
-                                        <a href={`mailto:${bank.email}`} className="hover-bright" style={{ display: 'flex', gap: '0.75rem', color: 'var(--text-primary)', textDecoration: 'none' }}>
-                                            <Mail size={18} color="var(--brand-primary)" />
-                                            {bank.email}
-                                        </a>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div className="glass-panel" style={{ padding: 'var(--spacing-md)', background: '#f9fafb', border: '1px solid #e5e7eb' }}>
-                                <h3 style={{ color: 'var(--text-primary)', marginBottom: 'var(--spacing-md)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <Heart size={20} color="var(--brand-primary)" /> Traditional List
-                                </h3>
-                                <p style={{ color: 'var(--text-secondary)' }}>
-                                    Check the AI Insight above for the most up-to-date informal needs, or contact us directly.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 'var(--spacing-md)', textAlign: 'center', marginBottom: 'var(--spacing-lg)' }}>
-                        <p style={{ color: 'var(--text-secondary)', marginBottom: '1rem' }}>Want to help {bank.name}?</p>
-                        <button className="button primary-button" onClick={() => window.location.href = `mailto:${bank.email}?subject=Donation Inquiry`} style={{ background: 'black', color: 'var(--brand-primary)', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
-                            Contact to Donate
-                        </button>
-                    </div>
+                        </CardContent>
+                    </Card>
                 </div>
-            </main>
+
+                {/* Sidebar - Right Column */}
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                 <Building2 className="text-primary" size={20} /> Contact Info
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                             {bank.address && (
+                                <div className="flex items-start gap-3 text-muted-foreground">
+                                    <MapPin size={18} className="mt-1 shrink-0" />
+                                    <span>{bank.address}</span>
+                                </div>
+                            )}
+                            {bank.phone_number && (
+                                <a href={`tel:${bank.phone_number}`} className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                                    <Phone size={18} className="text-primary" />
+                                    {bank.phone_number}
+                                </a>
+                            )}
+                            {bank.email && (
+                                <a href={`mailto:${bank.email}`} className="flex items-center gap-3 text-foreground hover:text-primary transition-colors">
+                                    <Mail size={18} className="text-primary" />
+                                    {bank.email}
+                                </a>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                             <CardTitle className="flex items-center gap-2">
+                                <Heart className="text-primary" size={20} /> Traditional List
+                            </CardTitle>
+                        </CardHeader>
+                         <CardContent>
+                            <p className="text-muted-foreground text-sm">
+                                Check the AI Insight above for the most up-to-date informal needs, or contact us directly.
+                            </p>
+                        </CardContent>
+                    </Card>
+                    
+                    <div className="pt-4 border-t text-center">
+                        <p className="text-muted-foreground mb-4 text-sm">Want to help {bank.name}?</p>
+                        <Button className="w-full font-bold" onClick={() => window.location.href = `mailto:${bank.email}?subject=Donation Inquiry`}>
+                            Contact to Donate
+                        </Button>
+                    </div>
+
+                </div>
+            </div>
         </div>
     );
 };
