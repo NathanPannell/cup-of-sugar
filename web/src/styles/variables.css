@@ -1,20 +1,20 @@
 /* Global Variables & Design System */
 :root {
-  /* Color Palette - Premium Dark Theme */
-  --bg-dark: #0f172a;
-  /* Slate 900 */
-  --bg-card: rgba(30, 41, 59, 0.7);
-  /* Slate 800 with opacity */
-  --text-primary: #f8fafc;
-  /* Slate 50 */
-  --text-secondary: #94a3b8;
-  /* Slate 400 */
+  /* Color Palette - Classic White & Yellow Theme */
+  --bg-dark: #fbfbf9;
+  /* Warm Off-White */
+  --bg-card: #ffffff;
+  --text-primary: #3f3f46;
+  /* Zinc 700 */
+  --text-secondary: #71717a;
+  /* Zinc 500 */
 
-  /* Brand Colors - Red Theme */
-  --brand-primary: #ef4444;
-  --brand-gradient: #ef4444;
-  /* Flatter feel */
-  --brand-glow: 0 0 15px rgba(239, 68, 68, 0.4);
+  /* Brand Colors - Bee Yellow Theme */
+  --brand-primary: #FFD700;
+  /* Bee Yellow (Gold) */
+  --brand-gradient: linear-gradient(135deg, #FFD700 0%, #F59E0B 100%);
+  /* Bright to darker yellow */
+  --brand-glow: 0 0 15px rgba(255, 215, 0, 0.5);
 
   /* Feedback Colors */
   --success: #10b981;
@@ -22,7 +22,7 @@
   --warning: #f59e0b;
 
   /* Typography */
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Merriweather', serif;
 
   /* Spacing */
   --spacing-xs: 0.5rem;
@@ -30,10 +30,10 @@
   --spacing-md: 2rem;
   --spacing-lg: 4rem;
 
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  /* Radius - Sharper Edges */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
 
   /* Transitions */
   --transition-fast: 0.2s ease;
