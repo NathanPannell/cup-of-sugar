@@ -1,0 +1,19 @@
+services:
+  api:
+    build: ./api
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    volumes:
+      - ./api:/app
+    # The api Dockerfile uses CMD ["flask", "run"]
+
+  web:
+    build: ./web
+    ports:
+      - "3000:4173"
+    depends_on:
+      - api
+    environment:
+      - VITE_API_URL=http://localhost:5000
