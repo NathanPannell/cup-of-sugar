@@ -1,1 +1,5 @@
-google-generativeai
+flask
+supabase
+python-dotenv
+numpy
+protobuf

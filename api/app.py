@@ -5,6 +5,7 @@ from flask import Flask, request, jsonify
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import numpy as np
+from google import genai
 
 load_dotenv()
 
@@ -14,6 +15,8 @@ supabase: Client = create_client(
     os.environ.get("SUPABASE_URL"),
     os.environ.get("SUPABASE_KEY")
 )
+
+gemini_client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 # --- helpers ---
 
@@ -36,7 +39,6 @@ def get_json_body_required():
 def normalize_text(s: str) -> str:
     return re.sub(r"\s+", " ", (s or "").strip()).lower()
 
-
 def get_text_blob_from_request() -> tuple[str | None, tuple | None]:
     """
     Accepts either:
@@ -57,9 +59,20 @@ def get_text_blob_from_request() -> tuple[str | None, tuple | None]:
 
 # --- routes ---
 
-@app.route("/")
+@app.route("/health")
 def index():
-    return "hello, world"
+    try:
+        supabase.table("foodbanks").select("*").limit(1).execute()
+        supabase_connected = True
+    except Exception:
+        supabase_connected = False
+    gemini_connected = gemini_client is not None
+    return jsonify({
+        "UP": supabase_connected and gemini_connected,
+        "services": {
+            "supabase_connected": supabase_connected,
+            "gemini_connected": gemini_connected}
+        }), 200 if supabase_connected and gemini_connected else 503
 
 
 @app.route("/foodbanks/<int:foodbank_id>")
