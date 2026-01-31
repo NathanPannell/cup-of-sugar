@@ -7,6 +7,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import numpy as np
 from google import genai
+import gemini_utils
 
 load_dotenv()
 
@@ -18,7 +19,7 @@ supabase: Client = create_client(
     os.environ.get("SUPABASE_KEY")
 )
 
-gemini_client = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
+# gemini_client is now handled in gemini_utils
 
 # --- helpers ---
 
@@ -68,7 +69,9 @@ def index():
         supabase_connected = True
     except Exception:
         supabase_connected = False
-    gemini_connected = gemini_client is not None
+    
+    gemini_connected = gemini_utils.check_gemini_health()
+    
     return jsonify({
         "UP": supabase_connected and gemini_connected,
         "services": {
@@ -164,36 +167,89 @@ def update_foodbank_data(foodbank_id: int):
 
 
 @app.route("/find_recommendations", methods=["POST"])
-def enrich_foodbanks_from_blob():
+def find_recommendations():
     """
-    Receives a text blob and returns:
-      - general_description (top-level)
-      - foodbanks: list of foodbanks with an extra_description for each row
+    Receives a donor's prompt and matches it against all food banks
+    using Gemini to provide alignment scores and rationales.
     """
     text_blob, err = get_text_blob_from_request()
     if err:
         return err
 
+    # Fetch all food banks to provide context to Gemini
     response = (
         supabase
         .from_("foodbanks")
-        .select("id", "name, description, phone_number, email", "uploaded_data")
+        .select("id, name, description, uploaded_data")
         .execute()
     )
 
-    rows = response.data or []
+    foodbanks = response.data or []
+    if not foodbanks:
+        return jsonify({
+            "recommendation_reason": "No food banks found in the database.",
+            "recommendations": []
+        }), 200
+
+    # Get scores from Gemini
+    match_response = gemini_utils.get_alignment_scores(text_blob, foodbanks)
+
+    # Map the scores back to the food bank objects
+    mapping = {m.foodbank_id: m for m in match_response.matches}
+    
     enriched = []
-    for row in rows:
-        row_out = dict(row)
-        del(row_out["uploaded_data"])
-        row_out["match_score"] = np.random.randint(0, 100)
-        row_out["match_reason"] = "There is a strong need here" if row_out["match_score"] > 50 else "Not relevant"
-        enriched.append(row_out)
+    for row in foodbanks:
+        match = mapping.get(row["id"])
+        if match:
+            # We don't want to leak 'uploaded_data' to the frontend usually, 
+            # or at least clean it up
+            row_out = {
+                "id": row["id"],
+                "name": row["name"],
+                "description": row["description"],
+                "match_score": match.score * 10, # Convert 1-10 to 1-100 for frontend consistency
+                "match_reason": match.reasoning
+            }
+            enriched.append(row_out)
 
     return jsonify({
-        "recommendation_reason": "<Overall summary of recommendations by AI>",
+        "recommendation_reason": match_response.overall_summary,
         "recommendations": enriched
     }), 200
+
+
+@app.route("/foodbanks/<int:foodbank_id>/summary", methods=["GET"])
+def get_foodbank_summary(foodbank_id: int):
+    """
+    Generates an AI summary of inventory and needs for a specific food bank.
+    """
+    # Fetch foodbank data
+    response = (
+        supabase
+        .from_("foodbanks")
+        .select("uploaded_data")
+        .eq("id", foodbank_id)
+        .execute()
+    )
+    
+    if not response.data:
+        return bad_request("Foodbank not found", status_code=404)
+        
+    data = response.data[0]
+    uploaded_data = data.get("uploaded_data") or {}
+    raw_text = uploaded_data.get("raw_text", "")
+    
+    if not raw_text:
+        return jsonify({
+            "inventory_summary": "No data available.",
+            "needs_summary": "No data available."
+        })
+
+    # Generate summary with Gemini
+    summary = gemini_utils.generate_foodbank_summary(raw_text)
+    
+    return jsonify(summary.model_dump())
+
 
 
 if __name__ == "__main__":
