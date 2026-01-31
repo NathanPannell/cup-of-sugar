@@ -38,9 +38,9 @@
 
 .card {
   padding: 2em;
-  background-color: #1a1a1a;
+  background-color: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-top: 2rem;
 }
 
@@ -58,7 +58,7 @@
 }
 
 .subtitle {
-  color: #aaa;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
 }
 
@@ -75,24 +75,23 @@
 }
 
 .primary-button {
-  background-color: #ef4444;
+  background: var(--brand-gradient);
   color: white;
 }
 
 .primary-button:hover {
-  border-color: #ef4444;
-  background-color: #dc2626;
+  filter: brightness(1.1);
 }
 
 .secondary-button {
-  background-color: #1a1a1a;
-  border: 1px solid #ef4444;
-  color: white;
+  background-color: transparent;
+  border: 1px solid var(--text-secondary);
+  color: var(--text-primary);
   margin-top: 1rem;
 }
 
 .secondary-button:hover {
-  background-color: #292929;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Forms */
@@ -114,7 +113,7 @@
 
 .form-group label {
   font-size: 0.9em;
-  color: #ccc;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
@@ -122,9 +121,9 @@
 .form-group textarea {
   padding: 0.8rem;
   border-radius: 6px;
-  border: 1px solid #333;
-  background-color: #242424;
-  color: white;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: var(--text-primary);
   font-family: inherit;
   font-size: 1rem;
   transition: border-color 0.2s;
@@ -133,37 +132,37 @@
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #ef4444;
+  border-color: var(--brand-primary);
 }
 
 /* Upload Area */
 .upload-area {
-  border: 2px dashed #444;
+  border: 2px dashed #cbd5e1;
   border-radius: 12px;
   padding: 3rem;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  background-color: #1e1e1e;
+  background-color: #f8fafc;
   margin: 2rem 0;
 }
 
 .upload-area:hover,
 .upload-area.drag-active {
-  border-color: #ef4444;
-  background-color: #252525;
+  border-color: var(--brand-primary);
+  background-color: #f1f5f9;
 }
 
 .upload-icon {
   font-size: 3rem;
-  color: #ef4444;
+  color: var(--brand-primary);
   margin-bottom: 1rem;
   display: block;
 }
 
 .upload-text p {
   margin: 0.5rem 0;
-  color: #ccc;
+  color: var(--text-primary);
 }
 
 .upload-hint {
