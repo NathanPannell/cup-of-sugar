@@ -2,6 +2,7 @@ import os
 import re
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import numpy as np
@@ -10,6 +11,7 @@ from google import genai
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 supabase: Client = create_client(
     os.environ.get("SUPABASE_URL"),
@@ -122,7 +124,46 @@ def create_foodbank_structured():
     return jsonify(response.data), 201
 
 
-@app.route("/foodbanks/enrich", methods=["POST"])
+@app.route("/foodbanks", methods=["GET"])
+def list_foodbanks():
+    response = (
+        supabase
+        .from_("foodbanks")
+        .select("*")
+        .execute()
+    )
+    return jsonify(response.data)
+
+
+@app.route("/foodbanks/<int:foodbank_id>", methods=["POST"])
+def update_foodbank_data(foodbank_id: int):
+    """
+    Updates the 'uploaded_data' field for a food bank.
+    """
+    # Check if foodbank exists first
+    check = supabase.from_("foodbanks").select("id").eq("id", foodbank_id).execute()
+    if not check.data:
+        return bad_request("Foodbank not found", {"id": foodbank_id}, status_code=404)
+
+    text_blob, err = get_text_blob_from_request()
+    if err:
+        return err
+
+    # Store the raw text in 'uploaded_data' (represented as JSON or just a string/object)
+    # The schema says jsonb, so we'll store it as an object with a 'text' key or similar
+    update_data = {"uploaded_data": {"raw_text": text_blob}}
+
+    response = (
+        supabase
+        .from_("foodbanks")
+        .update(update_data)
+        .eq("id", foodbank_id)
+        .execute()
+    )
+    return jsonify(response.data)
+
+
+@app.route("/find_recommendations", methods=["POST"])
 def enrich_foodbanks_from_blob():
     """
     Receives a text blob and returns:
