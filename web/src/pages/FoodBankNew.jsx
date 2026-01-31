@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Save, Loader2, ArrowLeft } from 'lucide-react';
 import { createFoodBank } from '../utils/api';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 const FoodBankNew = () => {
     const navigate = useNavigate();
@@ -32,52 +37,51 @@ const FoodBankNew = () => {
     };
 
     return (
-        <div className="container" style={{ minHeight: '100vh', padding: 'var(--spacing-md)' }}>
-            <button
-                onClick={() => navigate('/foodbanks')}
-                style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-secondary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--spacing-xs)',
-                    cursor: 'pointer',
-                    marginBottom: 'var(--spacing-lg)'
-                }}
-                className="hover-bright"
-            >
-                <ArrowLeft size={20} /> Back
-            </button>
+        <div className="max-w-2xl mx-auto py-8 animate-in fade-in duration-500">
+            <Link to="/foodbanks" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                <ArrowLeft size={16} className="mr-2" /> Back to List
+            </Link>
 
-            <div className="glass-panel" style={{ maxWidth: '600px', margin: '0 auto', padding: 'var(--spacing-lg)' }}>
-                <h2 style={{ marginBottom: 'var(--spacing-md)', color: 'var(--text-primary)' }}>Register New Food Bank</h2>
-                <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 'var(--spacing-md)' }}>
-                    <div>
-                        <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-xs)' }}>Name</label>
-                        <input name="name" value={formData.name} onChange={handleChange} required style={{ width: '100%', padding: 'var(--spacing-sm)', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px' }} />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-xs)' }}>Description</label>
-                        <textarea name="description" value={formData.description} onChange={handleChange} style={{ width: '100%', minHeight: '100px', padding: 'var(--spacing-sm)', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px' }} />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-xs)' }}>Phone Number</label>
-                        <input name="phone_number" value={formData.phone_number} onChange={handleChange} style={{ width: '100%', padding: 'var(--spacing-sm)', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px' }} />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-xs)' }}>Email</label>
-                        <input name="email" type="email" value={formData.email} onChange={handleChange} style={{ width: '100%', padding: 'var(--spacing-sm)', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px' }} />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-xs)' }}>Address</label>
-                        <input name="address" value={formData.address} onChange={handleChange} style={{ width: '100%', padding: 'var(--spacing-sm)', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.1)', color: 'white', borderRadius: '4px' }} />
-                    </div>
-                    <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: 'var(--spacing-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-xs)' }}>
-                        {loading ? <Loader2 className="animate-spin" size={20} /> : <><Save size={20} /> Register</>}
-                    </button>
-                </form>
-            </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl">Register New Food Bank</CardTitle>
+                    <CardDescription>Enter the details for the new food bank.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input id="name" name="name" value={formData.name} onChange={handleChange} required placeholder="e.g. Downtown Food Pantry" />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <Label htmlFor="description">Description</Label>
+                            <Textarea id="description" name="description" value={formData.description} onChange={handleChange} placeholder="Tell us about your mission..." className="min-h-[100px]" />
+                        </div>
+
+                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="phone_number">Phone Number</Label>
+                                <Input id="phone_number" name="phone_number" value={formData.phone_number} onChange={handleChange} placeholder="(555) 123-4567" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="email">Email</Label>
+                                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="contact@example.com" />
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="address">Address</Label>
+                            <Input id="address" name="address" value={formData.address} onChange={handleChange} placeholder="123 Main St, City, ST" />
+                        </div>
+
+                        <Button type="submit" disabled={loading} className="w-full mt-6">
+                            {loading ? <Loader2 className="animate-spin mr-2" size={20} /> : <Save className="mr-2" size={20} />}
+                            {loading ? 'Registering...' : 'Register Food Bank'}
+                        </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
     );
 };

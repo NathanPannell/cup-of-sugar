@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Upload, Loader2, FileText, Clipboard } from 'lucide-react';
 import { updateFoodBankData } from '../utils/api';
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 
 const FoodBankUpdate = () => {
     const { id } = useParams();
@@ -34,67 +38,54 @@ const FoodBankUpdate = () => {
     };
 
     return (
-        <div className="container" style={{ minHeight: '100vh', padding: 'var(--spacing-md)' }}>
-            <button
-                onClick={() => navigate(-1)}
-                style={{
-                    background: 'transparent',
-                    border: 'none',
-                    color: 'var(--text-secondary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 'var(--spacing-xs)',
-                    cursor: 'pointer',
-                    marginBottom: 'var(--spacing-lg)'
-                }}
-                className="hover-bright"
-            >
-                <ArrowLeft size={20} /> Back
-            </button>
+        <div className="max-w-3xl mx-auto py-8 animate-in fade-in duration-500">
+             <Link to={`/foodbanks/${id}`} className="inline-flex items-center text-muted-foreground hover:text-foreground mb-6 transition-colors">
+                <ArrowLeft size={16} className="mr-2" /> Back to Details
+            </Link>
 
-            <div className="glass-panel" style={{ maxWidth: '800px', margin: '0 auto', padding: 'var(--spacing-lg)' }}>
-                <h2 style={{ marginBottom: 'var(--spacing-sm)', color: 'var(--text-primary)' }}>Update Food Bank Data</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 'var(--spacing-lg)' }}>
-                    Copy-paste your inventory list or upload a text/csv file. We'll extract your current needs automatically.
-                </p>
+            <Card>
+                <CardHeader>
+                    <CardTitle className="text-2xl">Update Food Bank Data</CardTitle>
+                    <CardDescription>
+                         Copy-paste your inventory list or upload a text/csv file. We'll extract your current needs automatically.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Button variant="outline" className="relative cursor-pointer h-auto py-4 flex flex-col items-center gap-2 border-dashed border-2 hover:bg-accent/50">
+                             <Upload className="h-6 w-6 text-muted-foreground" />
+                             <span className="text-sm font-medium">Upload File</span>
+                             <span className="text-xs text-muted-foreground">(.txt, .csv)</span>
+                             <input type="file" onChange={handleFileUpload} accept=".txt,.csv" className="absolute inset-0 opacity-0 cursor-pointer" />
+                        </Button>
 
-                <div style={{ display: 'flex', gap: 'var(--spacing-md)', marginBottom: 'var(--spacing-md)' }}>
-                    <label className="btn-secondary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-xs)', cursor: 'pointer' }}>
-                        <Upload size={20} /> Upload File
-                        <input type="file" onChange={handleFileUpload} accept=".txt,.csv" style={{ display: 'none' }} />
-                    </label>
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-xs)', color: 'var(--text-secondary)', border: '1px dashed rgba(255,255,255,0.2)', borderRadius: 'var(--radius-sm)' }}>
-                        <Clipboard size={20} /> Paste below
+                         <div className="flex flex-col items-center justify-center gap-2 py-4 border-2 border-dashed rounded-md bg-muted/10 text-muted-foreground">
+                            <Clipboard className="h-6 w-6" />
+                            <span className="text-sm font-medium">Paste Text Below</span>
+                        </div>
                     </div>
-                </div>
 
-                <textarea
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Enter items, quantities, or paste text dump here..."
-                    style={{
-                        width: '100%',
-                        minHeight: '300px',
-                        background: 'rgba(0,0,0,0.2)',
-                        border: '1px solid rgba(255,255,255,0.1)',
-                        borderRadius: 'var(--radius-sm)',
-                        padding: 'var(--spacing-sm)',
-                        color: 'white',
-                        fontSize: '1rem',
-                        marginBottom: 'var(--spacing-md)',
-                        resize: 'vertical'
-                    }}
-                />
+                    <div className="space-y-2">
+                        <Label htmlFor="update-text" className="sr-only">Update Text</Label>
+                        <Textarea 
+                            id="update-text"
+                            value={text}
+                            onChange={(e) => setText(e.target.value)}
+                            placeholder="Enter items, quantities, or paste text dump here..."
+                            className="min-h-[300px] font-mono text-sm"
+                        />
+                    </div>
 
-                <button
-                    className="btn-primary"
-                    onClick={handleSubmit}
-                    disabled={loading || !text.trim()}
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--spacing-xs)' }}
-                >
-                    {loading ? <Loader2 className="animate-spin" size={20} /> : <><FileText size={20} /> Update Information</>}
-                </button>
-            </div>
+                    <Button 
+                        onClick={handleSubmit} 
+                        disabled={loading || !text.trim()} 
+                        className="w-full"
+                    >
+                        {loading ? <Loader2 className="animate-spin mr-2" size={20} /> : <FileText className="mr-2" size={20} />}
+                        {loading ? 'Updating...' : 'Update Information'}
+                    </Button>
+                </CardContent>
+            </Card>
         </div>
     );
 };

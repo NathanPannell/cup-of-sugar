@@ -1,1 +1,79 @@
-@import './styles/variables.css';
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+  :root {
+    /* Background: Warm Off-White (#fbfbf9 -> hsl(60, 11%, 98%)) */
+    --background: 60 11% 98%;
+    /* Foreground: Zinc 700 (#3f3f46 -> hsl(240, 5%, 26%)) */
+    --foreground: 240 5% 26%;
+
+    /* Card: White */
+    --card: 0 0% 100%;
+    --card-foreground: 240 5% 26%;
+
+    /* Popover: White */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 5% 26%;
+
+    /* Primary: Gold (#FFD700 -> hsl(48, 100%, 50%)) */
+    --primary: 48 100% 50%;
+    --primary-foreground: 240 5% 26%; /* Dark text on gold */
+
+    /* Secondary: Zinc 100 */
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+
+    /* Muted: Zinc 100 */
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+
+    /* Accent: Zinc 100 */
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+
+    /* Destructive: Red 500 */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Border: Zinc 200 */
+    --border: 240 5.9% 90%;
+    /* Input: Zinc 200 */
+    --input: 240 5.9% 90%;
+    /* Ring: Gold */
+    --ring: 48 100% 50%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 48 100% 50%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.6%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.6%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.6%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.6%;
+    --input: 240 3.7% 15.6%;
+    --ring: 48 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-medium;
+  }
+}
