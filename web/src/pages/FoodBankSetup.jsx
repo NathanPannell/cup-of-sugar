@@ -35,7 +35,7 @@ const FoodBankSetup = () => {
 
     // Mock API call simulation
     setTimeout(() => {
-      navigate(`/food-bank/${newId}`); // Redirect to new Profile Page
+      navigate('/food-bank/upload');
     }, 1000);
   };
 
